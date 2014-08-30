@@ -1,0 +1,49 @@
+pwm-backlight bindings
+
+Required properties:
+  - compatible: "pwm-backlight"
+  - pwms: OF device-tree PWM specification (see PWM binding[0])
+  - brightness-levels: Array of distinct brightness levels. Typically these
+      are in the range from 0 to 255, but any range starting at 0 will do.
+      The actual brightness level (PWM duty cycle) will be interpolated
+      from these values. 0 means a 0% duty cycle (darkest/off), while the
+      last value in the array represents a 100% duty cycle (brightest).
+  - default-brightness-level: the default brightness level (index into the
+      array defined by the "brightness-levels" property)
+
+Optional properties:
+  - pwm-names: a list of names for the PWM devices specified in the
+               "pwms" property (see PWM binding[0])
+  - low_threshold_brightness: brightness threshold low level. (get linear
+		 scales in brightness in low end of brightness levels)
+
+[0]: Documentation/devicetree/bindings/pwm/pwm.txt
+
+Example:
+
+	backlight {
+		compatible = "pwm-backlight";
+		pwms = <&pwm 0 5000000>;
+
+		brightness-levels = <0 4 8 16 32 64 128 255>;
+		default-brightness-level = <6>;
+	};
+
+Example for brightness_threshold_level:
+
+	backlight {
+		compatible	= "pwm-backlight";
+		pwms = <&pwm 0 50000>;
+
+		brightness-levels = <0 4 8 16 32 64 128 255>;
+		default-brightness-level = <6>;
+		low_threshold_brightness = <50>;
+	};
+};
+Note:
+Low threshold support is required to have linear brightness scale from
+0 to max. For some panels, backlight absent on low end of brightness
+scale. So support for Low Threshold been required. So that the scale of
+brightness changed from Low Threshold to Max in scales defined in
+brightness-levels. In this example 20% maximum brightness scale should
+be required to turn on panel backlight.
